@@ -1,0 +1,63 @@
+# Golang CircleCI 2.0 configuration file
+#
+# Check https://circleci.com/docs/2.0/language-go/ for more details
+version: 2
+jobs:
+  build:
+    docker:
+      # specify the version
+      - image: circleci/golang:1.8
+      
+      # Specify service dependencies here if necessary
+      # CircleCI maintains a library of pre-built images
+      # documented at https://circleci.com/docs/2.0/circleci-images/
+      # - image: circleci/postgres:9.4
+
+    #### TEMPLATE_NOTE: go expects specific checkout path representing url
+    #### expecting it in the form of
+    ####   /go/src/github.com/circleci/go-tool
+    ####   /go/src/bitbucket.org/circleci/go-tool
+    working_directory: /go/src/github.com/rhysbryant/gtagreaderemulator
+    steps:
+      - checkout
+
+      # specify any bash command here prefixed with `run: `
+      - run: go get -v -t -d ./...
+      - run: go test -v ./...
+      - run: go get github.com/mitchellh/gox
+      - run: go get github.com/mholt/archiver/cmd/archiver
+      - run: gox -os="linux windows" -arch="386 amd64 arm" -output "dist/tagEmulatorClient_{{.OS}}_{{.Arch}}" -ldflags="-X main.AppVersion=_$CIRCLE_TAG"
+      - run: bash .circleci/build-archives.sh
+      - persist_to_workspace:
+         root: packages/
+         paths:
+          - goprinter_*
+      - store_artifacts:
+         path: packages/
+          
+  deploy:
+    docker:
+      # specify the version
+      - image: circleci/golang:1.8
+    working_directory: /go/src/github.com/rhysbryant/gtagreaderemulator
+    steps:
+     - attach_workspace:
+         at: packages
+     - run: go get github.com/tcnksm/ghr
+     - run: ghr -t $GITHUB_TOKEN -u $CIRCLE_PROJECT_USERNAME -r $CIRCLE_PROJECT_REPONAME $CIRCLE_TAG packages/
+workflows:
+  version: 2
+  build_and_test:
+    jobs:
+      - build:
+          filters:
+           tags:
+             only: /.*/
+      - deploy:
+          requires:
+            - build
+          filters:
+            tags:
+              only: /^release-.*/
+            branches:
+              ignore: /.*/
