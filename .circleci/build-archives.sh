@@ -1,7 +1,7 @@
 #!/bin/bash
 mkdir release 
 outputName=""
-cp -R ui tools  release/
+
 for file in dist/*
 do
  if [[ "$file" == *"win"* ]]; then
