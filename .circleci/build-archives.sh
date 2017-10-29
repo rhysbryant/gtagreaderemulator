@@ -13,7 +13,6 @@ do
 	new+=".tar.gz"
 	outputName="tagEmulatorClient"
  fi;
- cp $configFile release/config.json -f
  cp $file release/$outputName -f
  cd release/
  archiver make "../$new" $outputName
