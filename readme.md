@@ -27,6 +27,12 @@ for example
 git clone https://github.com/rhysbryant/readerEmulatorClient/
 sudo ./tagEmulatorClient --readerPath=/dev/ttyACM0 --file=dump.txt --cmd readFromFile
 ```
+to start the web interface run 
+```shell
+gtagreaderemulator.exe -readerPath="COM3" -cmd=starthttpagent
+```
+
+then go to http://localhost:8000/
 
 # License
 

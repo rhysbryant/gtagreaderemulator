@@ -27,9 +27,12 @@ import (
 	"os"
 	"time"
 
+	"github.com/jacobsa/go-serial/serial"
 	"github.com/rhysbryant/gtagreaderemulator"
-
-	"github.com/tarm/serial"
+	"github.com/rhysbryant/gtagreaderemulator/httpagent"
+	"github.com/rhysbryant/gtagreaderemulator/i2cuarttagapi"
+	"github.com/rhysbryant/gtagreaderemulator/uarttagapi"
+	"github.com/rhysbryant/gtagreaderemulator/utils"
 )
 
 func printError(e error) {
@@ -39,11 +42,12 @@ func printError(e error) {
 }
 
 func main() {
-	var cmd, devicePath, filePath string
+	var cmd, devicePath, filePath, connectionType string
 
 	flag.StringVar(&cmd, "cmd", "", "command writeToFile, readFromFile")
 	flag.StringVar(&devicePath, "readerPath", "", "the path to the serial/uart port")
 	flag.StringVar(&filePath, "file", "", "the local file to read or write to/from when using the file commands")
+	flag.StringVar(&connectionType, "connType", "uart", "the connection type uart or i2c for i2c over uart")
 	flag.Parse()
 
 	if cmd == "" || devicePath == "" || filePath == "" {
@@ -52,39 +56,53 @@ func main() {
 		return
 	}
 
-	c := serial.Config{}
-	c.Name = devicePath
-	c.Baud = 115200
-	c.ReadTimeout = time.Millisecond * 500
+	// Set up options.
+	options := serial.OpenOptions{
+		PortName:          devicePath,
+		BaudRate:          115200,
+		DataBits:          8,
+		StopBits:          1,
+		MinimumReadSize:   1,
+		RTSCTSFlowControl: false,
+	}
 
-	p, err := serial.OpenPort(&c)
+	// Open the port.
+	p, err := serial.Open(options)
 	if err != nil {
-		fmt.Print(err)
+		fmt.Printf("serial.Open: %v\n", err)
 		return
 	}
-	client := tagreaderemulator.NewClient(p, p, 500)
-	v, err := client.GetVersionInfo()
-	if err != nil {
-		printError(err)
-		return
+
+	time.Sleep(5000)
+	var client tagreaderemulator.TagReaderAPI
+	if connectionType == "i2c" {
+		c := i2cuarttagapi.NewClient(p, p, 5000)
+		client = c
+
+	} else {
+		c := uarttagapi.NewClient(p, p, 5000)
+		client = c
+
 	}
-	fmt.Printf("Emulator Firmware Version Info: %s\n", v)
 
 	switch cmd {
 	case "writeToFile":
-		printError(client.WritePagesToFile(filePath))
+		printError(utils.WritePagesToFile(client, filePath))
 	case "readFromFile":
 		if err := client.DisableTag(); err != nil {
 			printError(err)
 			return
 		}
 
-		printError(client.WritePagesFromFile(filePath))
+		printError(utils.WritePagesFromFile(client, filePath))
 
 		if err := client.EnableTag(); err != nil {
 			printError(err)
 			return
 		}
+	case "starthttpagent":
+		httpagent.TagConnection = client
+		httpagent.Start(":8000")
 	default:
 		fmt.Println("unknown cmd")
 		flag.Usage()
