@@ -17,7 +17,7 @@ jobs:
     #### expecting it in the form of
     ####   /go/src/github.com/circleci/go-tool
     ####   /go/src/bitbucket.org/circleci/go-tool
-    working_directory: /go/src/github.com/rhysbryant/gtagreaderemulator/cmd/gtagreaderemulator
+    working_directory: /go/src/github.com/rhysbryant/gtagreaderemulator/
     steps:
       - checkout
 
@@ -27,7 +27,6 @@ jobs:
       - run: go get github.com/mitchellh/gox
       - run: go get github.com/mholt/archiver/cmd/archiver
       - run: gox -os="linux windows" -arch="386 amd64 arm" -output "../dist/tagEmulatorClient_{{.OS}}_{{.Arch}}" -ldflags="-X main.AppVersion=_$CIRCLE_TAG"
-      - run: cd ../..
       - run: bash .circleci/build-archives.sh
       - persist_to_workspace:
          root: packages/
@@ -40,7 +39,7 @@ jobs:
     docker:
       # specify the version
       - image: circleci/golang:1.8
-    working_directory: /go/src/github.com/rhysbryant/gtagreaderemulator/cmd/gtagreaderemulator
+    working_directory: /go/src/github.com/rhysbryant/gtagreaderemulator/
     steps:
      - attach_workspace:
          at: packages
