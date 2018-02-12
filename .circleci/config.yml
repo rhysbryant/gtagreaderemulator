@@ -26,12 +26,12 @@ jobs:
       - run: go test -v ./...
       - run: go get github.com/mitchellh/gox
       - run: go get github.com/mholt/archiver/cmd/archiver
-      - run: gox -os="linux windows" -arch="386 amd64 arm" -output "../dist/tagEmulatorClient_{{.OS}}_{{.Arch}}" -ldflags="-X main.AppVersion=_$CIRCLE_TAG"
+      - run: gox -os="linux windows" -arch="386 amd64 arm" -output "dist/tagEmulatorClient_{{.OS}}_{{.Arch}}" -ldflags="-X main.AppVersion=_$CIRCLE_TAG"
       - run: bash .circleci/build-archives.sh
       - persist_to_workspace:
          root: packages/
          paths:
-          - goprinter_*
+          - tagEmulatorClient_*
       - store_artifacts:
          path: packages/
           
