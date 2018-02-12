@@ -26,7 +26,7 @@ jobs:
       - run: go test -v ./...
       - run: go get github.com/mitchellh/gox
       - run: go get github.com/mholt/archiver/cmd/archiver
-      - run: gox github.com/rhysbryant/cmd/gtagreaderemulator -os="linux windows" -arch="386 amd64 arm" -output "dist/tagEmulatorClient_{{.OS}}_{{.Arch}}" -ldflags="-X main.AppVersion=_$CIRCLE_TAG" github.com/rhysbryant/gtagreaderemulator/cmd/gtagreaderemulator
+      - run: gox -os="linux windows" -arch="386 amd64 arm" -output "dist/tagEmulatorClient_{{.OS}}_{{.Arch}}" -ldflags="-X main.AppVersion=_$CIRCLE_TAG" github.com/rhysbryant/gtagreaderemulator/cmd/gtagreaderemulator
       - run: bash .circleci/build-archives.sh
       - persist_to_workspace:
          root: packages/
