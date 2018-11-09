@@ -32,7 +32,9 @@ import (
 	"github.com/rhysbryant/gtagreaderemulator/httpagent"
 	"github.com/rhysbryant/gtagreaderemulator/i2cuarttagapi"
 	"github.com/rhysbryant/gtagreaderemulator/uarttagapi"
+	"github.com/rhysbryant/gtagreaderemulator/i2ctagapi"
 	"github.com/rhysbryant/gtagreaderemulator/utils"
+	"github.com/d2r2/go-i2c"
 )
 
 func printError(e error) {
@@ -47,7 +49,7 @@ func main() {
 	flag.StringVar(&cmd, "cmd", "", "command writeToFile, readFromFile")
 	flag.StringVar(&devicePath, "readerPath", "", "the path to the serial/uart port")
 	flag.StringVar(&filePath, "file", "", "the local file to read or write to/from when using the file commands")
-	flag.StringVar(&connectionType, "connType", "uart", "the connection type uart or i2c for i2c over uart")
+	flag.StringVar(&connectionType, "connType", "uart", "the connection type uart, i2c for i2c over uart or locali2c")
 	flag.Parse()
 
 	if cmd == "" || devicePath == "" || filePath == "" {
@@ -65,16 +67,22 @@ func main() {
 		MinimumReadSize:   1,
 		RTSCTSFlowControl: false,
 	}
-
+	var client tagreaderemulator.TagReaderAPI
+	var p *serial.Serial
+	if connectionType == "locali2c" {
+		i2c, err := i2c.NewI2C(0x27, 2)
+		i2ctagapi.NewClient(i2c,5000)
+	}else{
 	// Open the port.
 	p, err := serial.Open(options)
 	if err != nil {
 		fmt.Printf("serial.Open: %v\n", err)
 		return
 	}
+}
 
 	time.Sleep(5000)
-	var client tagreaderemulator.TagReaderAPI
+	
 	if connectionType == "i2c" {
 		c := i2cuarttagapi.NewClient(p, p, 5000)
 		client = c
