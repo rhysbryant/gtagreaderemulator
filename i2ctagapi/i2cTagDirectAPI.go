@@ -88,7 +88,7 @@ func (c *Client) bufferLevel() (byte, error) {
 	return c.readRegister(readerFIFOLevelReg)
 }
 
-func (c *Client) waitforData(minNumBytes int) (byte, error) {
+func (c *Client) waitforData(minNumBytes byte) (byte, error) {
 
 	start := time.Now()
 	for {
