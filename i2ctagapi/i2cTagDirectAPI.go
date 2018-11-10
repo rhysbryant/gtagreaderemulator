@@ -88,7 +88,7 @@ func (c *Client) bufferLevel() (byte, error) {
 	return c.readRegister(readerFIFOLevelReg)
 }
 
-func (c *Client) waitforData() (byte, error) {
+func (c *Client) waitforData(minNumBytes int) (byte, error) {
 
 	start := time.Now()
 	for {
@@ -96,7 +96,7 @@ func (c *Client) waitforData() (byte, error) {
 		if err != nil {
 			return 0, err
 		}
-		if FIFOLevel > 0 {
+		if FIFOLevel > =minNumBytes {
 			return FIFOLevel, nil
 		}
 
@@ -124,7 +124,7 @@ func (c *Client) WritePage(pageIndex int, pageData []byte) error {
 		return err
 	}
 
-	_, err := c.waitforData()
+	_, err := c.waitforData(1)
 	if err != nil {
 		return err
 	}
@@ -161,7 +161,7 @@ func (c *Client) ReadPages(startPageIndex int) ([]byte, error) {
 		return nil, err
 	}
 
-	numBytes, err := c.waitforData()
+	numBytes, err := c.waitforData(tagNumPagesPerRead * tagNumBytesPerPage)
 	if err != nil {
 		return nil, err
 	}
