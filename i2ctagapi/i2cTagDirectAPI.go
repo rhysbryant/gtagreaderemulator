@@ -96,7 +96,7 @@ func (c *Client) waitforData(minNumBytes int) (byte, error) {
 		if err != nil {
 			return 0, err
 		}
-		if FIFOLevel > =minNumBytes {
+		if FIFOLevel >= minNumBytes {
 			return FIFOLevel, nil
 		}
 
