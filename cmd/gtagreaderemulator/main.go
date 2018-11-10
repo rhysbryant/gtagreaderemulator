@@ -72,10 +72,15 @@ func main() {
 	var p io.ReadWriteCloser
 	if connectionType == "locali2c" {
 		i2c, err := i2c.NewI2C(0x27, 2)
+		if err != nil {
+			fmt.Printf("NewI2C: %v\n", err)
+			return
+		}		
 		i2ctagapi.NewClient(i2c, 5000)
 	} else {
+		var err error
 		// Open the port.
-		p, err := serial.Open(options)
+		p, err = serial.Open(options)
 		if err != nil {
 			fmt.Printf("serial.Open: %v\n", err)
 			return
