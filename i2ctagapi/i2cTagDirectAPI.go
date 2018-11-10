@@ -148,13 +148,8 @@ func (c *Client) WritePage(pageIndex int, pageData []byte) error {
 }
 
 func (c *Client) ReadPages(startPageIndex int) ([]byte, error) {
-	if startPageIndex >= 41 {
-		//workriound bug in a emulator reading above 41 gets no response
-		data := make([]byte, tagNumPagesPerRead*tagNumBytesPerPage)
-		return data, nil
-	}
 
-	fmt.Printf("ReadPages index %d", startPageIndex)
+	fmt.Printf("ReadPages index %d\n", startPageIndex)
 	if err := c.clearBuffer(); err != nil {
 		return nil, err
 	}
