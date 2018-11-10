@@ -30,18 +30,20 @@ import (
 )
 
 const (
-	actionReadCode            = 1
-	actionWriteCode           = 2
-	tagCommandReadPages       = 0x30
-	tagCommandWritePage       = 0xA2
-	tagCommandResponseAck     = 0xA
-	tagNumPagesPerRead        = 4
-	tagNumBytesPerPage        = 4
-	readerFIFOLevelReg        = 0x0A
-	readerFIFOReg             = 0x09
-	readerFrameingModeReg     = 0x0D
-	readerFramingModeTransmit = 0x80
-	readerFIFOClear           = 0x80
+	actionReadCode                 = 1
+	actionWriteCode                = 2
+	tagCommandReadPages            = 0x30
+	tagCommandWritePage            = 0xA2
+	tagCommandResponseAck          = 0xA
+	tagNumPagesPerRead             = 4
+	tagNumBytesPerPage             = 4
+	readerFIFOLevelReg             = 0x0A
+	readerFIFOReg                  = 0x09
+	readerCommandReg               = 0x01
+	readerCommandRegModeTransceive = 0xC
+	readerFrameingModeReg          = 0x0D
+	readerFramingModeTransmit      = 0x80
+	readerFIFOClear                = 0x80
 )
 
 var (
@@ -77,6 +79,10 @@ func (c *Client) writeToBuffer(data ...byte) error {
 }
 
 func (c *Client) sendBufferToTag() error {
+	if err := c.writeRegister(readerCommandReg, readerCommandRegModeTransceive); err != nil {
+		return err
+	}
+
 	return c.writeRegister(readerFrameingModeReg, readerFramingModeTransmit)
 }
 
