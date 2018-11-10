@@ -71,7 +71,7 @@ func main() {
 	var client tagreaderemulator.TagReaderAPI
 	var p io.ReadWriteCloser
 	if connectionType == "locali2c" {
-		i2c, err := i2c.NewI2C(0x27, 2)
+		i2c, err := i2c.NewI2C(0x28, 1)
 		if err != nil {
 			fmt.Printf("NewI2C: %v\n", err)
 			return
