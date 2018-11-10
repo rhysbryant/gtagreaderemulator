@@ -24,17 +24,18 @@ package main
 import (
 	"flag"
 	"fmt"
+	"io"
 	"os"
 	"time"
 
+	"github.com/d2r2/go-i2c"
 	"github.com/jacobsa/go-serial/serial"
 	"github.com/rhysbryant/gtagreaderemulator"
 	"github.com/rhysbryant/gtagreaderemulator/httpagent"
+	"github.com/rhysbryant/gtagreaderemulator/i2ctagapi"
 	"github.com/rhysbryant/gtagreaderemulator/i2cuarttagapi"
 	"github.com/rhysbryant/gtagreaderemulator/uarttagapi"
-	"github.com/rhysbryant/gtagreaderemulator/i2ctagapi"
 	"github.com/rhysbryant/gtagreaderemulator/utils"
-	"github.com/d2r2/go-i2c"
 )
 
 func printError(e error) {
@@ -68,21 +69,21 @@ func main() {
 		RTSCTSFlowControl: false,
 	}
 	var client tagreaderemulator.TagReaderAPI
-	var p *serial.Serial
+	var p io.ReadWriteCloser
 	if connectionType == "locali2c" {
 		i2c, err := i2c.NewI2C(0x27, 2)
-		i2ctagapi.NewClient(i2c,5000)
-	}else{
-	// Open the port.
-	p, err := serial.Open(options)
-	if err != nil {
-		fmt.Printf("serial.Open: %v\n", err)
-		return
+		i2ctagapi.NewClient(i2c, 5000)
+	} else {
+		// Open the port.
+		p, err := serial.Open(options)
+		if err != nil {
+			fmt.Printf("serial.Open: %v\n", err)
+			return
+		}
 	}
-}
 
 	time.Sleep(5000)
-	
+
 	if connectionType == "i2c" {
 		c := i2cuarttagapi.NewClient(p, p, 5000)
 		client = c

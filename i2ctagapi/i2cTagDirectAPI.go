@@ -1,4 +1,4 @@
-package i2cuarttagapi
+package i2ctagapi
 
 /**
  * @License LGPL
