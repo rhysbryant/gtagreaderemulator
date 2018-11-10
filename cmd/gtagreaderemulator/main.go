@@ -76,7 +76,7 @@ func main() {
 			fmt.Printf("NewI2C: %v\n", err)
 			return
 		}		
-		i2ctagapi.NewClient(i2c, 5000)
+		client=i2ctagapi.NewClient(i2c, 5000)
 	} else {
 		var err error
 		// Open the port.
@@ -93,7 +93,7 @@ func main() {
 		c := i2cuarttagapi.NewClient(p, p, 5000)
 		client = c
 
-	} else {
+	} else if connectionType == "uart"  {
 		c := uarttagapi.NewClient(p, p, 5000)
 		client = c
 
