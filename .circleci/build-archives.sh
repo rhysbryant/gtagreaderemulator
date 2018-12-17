@@ -15,7 +15,7 @@ do
  fi;
  cp $file release/$outputName -f
  cd release/
- archiver make "../$new" $outputName
+ arc archive "../$new" $outputName
  cd ..
 done;
 
