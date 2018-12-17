@@ -139,15 +139,16 @@
         <h5 class="display-5">Pages Data</h5>
 		
 		<div style="display: inline-block;">
-			<p>Retrive from reader/emulator directly</p>
-			
+			<p>Retrive from reader/emulator directly
+			<p> you can get the agent from <a href="https://github.com/rhysbryant/gtagreaderemulator/releases" >Here</a></p></p>
 			<form class="form-inline">
 				<label class="mr-sm-2" for="agent-address">Agent Address:</label>
-				<input type="text" class="form-control mb-2 mr-sm-2 mb-sm-0" id="agent-address" placeholder="http://localhost">
+				<input type="text" class="form-control mb-2 mr-sm-2 mb-sm-0" id="agent-address" value="http://localhost:8000">
 
 				<button type="button" class="btn-sm btn-primary" id="connect">Retrieve</button>
-				<div class="invalid-feedback" id="agent-address-error"></div>
+				
 			</form>
+			<div class="invalid-feedback" id="agent-address-error"></div>
 		</div>
 		
 		<p>Or copy and paste the pages of your existing tag</p>

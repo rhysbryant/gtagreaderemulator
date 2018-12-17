@@ -85,6 +85,22 @@ function loadData(tagData){
 		updateUIFields(tagData)
 }
 
+function sendAllDataToAgent(){
+	var data=tag.getData();
+	var pagesToSend=[]
+	for (i=0;i<45;i++){
+		pagesToSend.push(i);
+	}
+	tagAgent.writePages(pagesToSend.join(","),data,
+		function(data){
+			console.log(data);
+			alert("tag updated using agent");
+		},
+		function(msg){
+			showError("#agent-address",msg);
+	})
+}
+
 function sendChangedDataToAgent(){
 	var pagesToSend=tag.getDirtyPages();
 	
@@ -125,6 +141,9 @@ function getTagDataFromAgent(){
 }
 
 function showError(elm,e){
+	if( elm == "#agent-address"){
+		$(elm+"-error").css({display:'block'}).html(e);
+	}
 	$(elm)
 	.addClass("is-invalid")
 	.parent()
@@ -133,6 +152,10 @@ function showError(elm,e){
 }
 
 function clearError(elm){
+	if( elm == "#agent-address"){
+		$(elm+"-error").css({display:'none'});
+	}
+
 	$(elm)
 	.removeClass("is-invalid")
 	.parent()
@@ -366,7 +389,7 @@ function bindUIElements(){
 		return s;
 	})
 	
-	bind("#agent-address",tagAgent.url);
+	//bind("#agent-address",tagAgent.url);
 }
 
 $(document).ready(function(){

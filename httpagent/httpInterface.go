@@ -13,6 +13,8 @@ import (
 	"github.com/rhysbryant/gtagreaderemulator/utils"
 )
 
+const publicSiteOrigin = "https://nfctag.info"
+
 type tagData struct {
 	Data        []byte `json:"data"`
 	PageIndexes []int  `json:"pageIndexes"`
@@ -26,6 +28,7 @@ func writeErrorResponse(w http.ResponseWriter, err error) {
 
 	w.Header().Add("Content-Type", "application/json")
 	w.Header().Add("Server", "tagtool")
+	w.Header().Add("Access-Control-Allow-Origin", publicSiteOrigin)
 	w.WriteHeader(http.StatusBadRequest)
 
 	res := struct{ StatusMessage string }{err.Error()}
@@ -36,6 +39,7 @@ func writeJsonResponse(w http.ResponseWriter, object interface{}) {
 
 	w.Header().Add("Content-Type", "application/json")
 	w.Header().Add("Server", "tagtool")
+	w.Header().Add("Access-Control-Allow-Origin", publicSiteOrigin)
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(object)
 }

@@ -45,7 +45,7 @@ function TagApi(){
 			if(r.responseJSON && r.responseJSON.StatusMessage){
 				errorCallback("agent returned error "+r.responseJSON.StatusMessage)
 			}else{
-				errorCallback(httpStatus);
+				errorCallback(b);
 			}
 		});
 	}
